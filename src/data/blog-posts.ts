@@ -94,3 +94,16 @@ export function generateGradient(seedHex: string): string {
 
   return gradient;
 }
+
+export const getBlogPosts = (query: string) => {
+  const words = query.split(" ");
+
+  return blogPosts.filter((post) => {
+    if (!query) return true;
+    return (
+      words.every((word) => post.tags.some((w) => w === word)) ||
+      post.title.includes(query) ||
+      post.description.includes(query)
+    );
+  });
+};
