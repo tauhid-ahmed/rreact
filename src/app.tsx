@@ -3,7 +3,7 @@ import { BlogPage } from "./pages/blog-page";
 import { HomePage } from "./pages/home";
 import RootLayout from "./pages/layout";
 
-export function Router() {
+export default function App() {
   return (
     <Routes>
       <Route element={<RootLayout />}>
