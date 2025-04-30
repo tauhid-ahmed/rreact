@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { getBlogPosts, generateGradient } from "../data/blog-posts";
+import { HiHeart } from "react-icons/hi";
 
 type Post = {
   id: string;
@@ -9,13 +10,34 @@ type Post = {
 
 export default function BlogPosts() {
   const [query, setQuery] = useState("");
+  const [favorites, setFavorites] = useState<string[]>([]);
   const posts = getBlogPosts(query);
+  const sortedPost = [...posts].sort((a, b) => {
+    const aFav = favorites.includes(a.id);
+    const bFav = favorites.includes(b.id);
+    return aFav === bFav ? 0 : aFav > bFav ? -1 : 1;
+  });
   return (
     <div className="py-6 space-y-10">
       <Form query={query} setQuery={setQuery} />
       <div className="flex flex-wrap justify-center">
-        {posts.map((post: Post) => (
-          <Card key={post.id} post={post} />
+        {sortedPost.map((post: Post) => (
+          <Card
+            key={post.id}
+            post={post}
+            isFavorite={favorites.includes(post.id)}
+            onFavoriteClick={(isFavorite: boolean, favId: string) => {
+              if (!isFavorite) {
+                setFavorites((prevFavorite) => {
+                  return prevFavorite.filter((id) => id !== favId);
+                });
+              } else {
+                return setFavorites((favorites) => {
+                  return [...favorites, favId];
+                });
+              }
+            }}
+          />
         ))}
       </div>
     </div>
@@ -90,16 +112,45 @@ function Form({
   );
 }
 
-function Card({ post }: { post: Post }) {
+function Card({
+  post,
+  isFavorite,
+  onFavoriteClick,
+}: {
+  post: Post;
+  isFavorite: boolean;
+  onFavoriteClick: (isFavorite: boolean, favId: string) => void;
+}) {
   return (
     <div className="basis-2/2 sm:basis-1/2 md:basis-1/3 p-4 overflow-hidden">
       <div className="space-y-2">
         <div
-          className="aspect-video"
+          className="aspect-video relative"
           style={{
             background: generateGradient(post.id),
           }}
-        ></div>
+        >
+          <div className="absolute right-4 top-4">
+            {isFavorite ? (
+              <button
+                className="drop-shadow"
+                onClick={() => onFavoriteClick(false, post.id)}
+              >
+                <HiHeart
+                  size={32}
+                  className="fill-pink-500 stroke-white stroke-1"
+                />
+              </button>
+            ) : (
+              <button
+                className="drop-shadow"
+                onClick={() => onFavoriteClick(true, post.id)}
+              >
+                <HiHeart size={32} />
+              </button>
+            )}
+          </div>
+        </div>
         <h2 className="text-lg whitespace-nowrap truncate">{post.title}</h2>
         <p>{post.description}</p>
       </div>
