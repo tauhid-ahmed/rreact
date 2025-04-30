@@ -8,7 +8,7 @@ type Post = {
   description: string;
 };
 
-export default function BlogPosts() {
+export function BlogPage() {
   const [query, setQuery] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
   const posts = getBlogPosts(query);
