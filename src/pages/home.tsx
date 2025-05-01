@@ -1,9 +1,9 @@
-import Counter from "../features/counter/counter";
+import PostsList from "../features/posts/posts-list";
 
 export function HomePage() {
   return (
     <div>
-      <Counter />
+      <PostsList />
     </div>
   );
 }
